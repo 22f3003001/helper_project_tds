@@ -14,7 +14,7 @@ HTML_CONTENT = """<!DOCTYPE html>
   <p>Download the dataset and answer the question:</p>
   <p><b>Question:</b> Which branch has the highest revenue in first 3 months </p>
   <p>Dataset: <a href="/pdf">sample.pdf</a></p>
-  <p>Submit your answer via POST /submit</p>
+  <p>Submit your answer via Post to https://helper-project-6anfgisjr-dishas-projects-6fe3ba51.vercel.app/submit </p>
 </body>
 </html>
 """
@@ -25,7 +25,7 @@ def index():
 
 @app.route("/pdf")
 def serve_pdf():
-    file_path = "fake_company_report.pdf"  # 4 spaces, aligned with the function body
+    file_path = "/fake_company_report.pdf"  # 4 spaces, aligned with the function body
     if os.path.exists(file_path):
         return send_file(file_path, mimetype="application/pdf")
     return "File not found", 404
@@ -43,6 +43,7 @@ def submit_answer():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
+
 
 
 
