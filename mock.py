@@ -1,12 +1,11 @@
-from flask import Flask, send_from_directory, Response, send_file
-from werkzeug.utils import safe_join
+from flask import Flask, send_file, request, jsonify
 import os
 
 app = Flask(__name__)
 
-# Path to folder containing PDFs
+# PDF folder
 PDF_FOLDER = os.path.join(os.path.dirname(__file__), "pdfs")
-os.makedirs(PDF_FOLDER, exist_ok=True)  # create if not exists
+os.makedirs(PDF_FOLDER, exist_ok=True)
 
 HTML_CONTENT = """<!DOCTYPE html>
 <html>
@@ -15,24 +14,40 @@ HTML_CONTENT = """<!DOCTYPE html>
   <p>Download the dataset and answer the question:</p>
   <p><b>Question:</b> Which branch has the highest revenue in first 3 months </p>
   <p>Dataset: <a href="/pdf">sample.pdf</a></p>
-  <p>Submit your answer here: https://mock-submit.local/submit</p>
+  <p>Submit your answer via POST /submit</p>
 </body>
 </html>
 """
 
 @app.route("/")
 def index():
-    return Response(HTML_CONTENT, mimetype="text/html")
+    return HTML_CONTENT
 
 @app.route("/pdf")
 def serve_pdf():
-    file_path = "fake_company_report.pdf"  # must exist in same folder
+    file_path = os.path.join(PDF_FOLDER, "fake_company_report.pdf")
     if os.path.exists(file_path):
-        return send_file(file_path, mimetype='application/pdf')
+        return send_file(file_path, mimetype="application/pdf")
     return "File not found", 404
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+@app.route("/submit", methods=["POST"])
+def submit_answer():
+    data = request.get_json()
+    if not data or "answer" not in data:
+        return jsonify({"success": False, "message": "No answer provided"}), 400
+
+    answer = data["answer"].strip().lower()
+    correct = answer == "branch c".lower()
+    return jsonify({"success": correct})
+
+# Expose the Flask app for Vercel serverless
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
+from werkzeug.serving import run_simple
+
+# Vercel looks for `app` variable at root
+# So just export the Flask app
+
+
 
 
 
