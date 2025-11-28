@@ -3,7 +3,7 @@ import os
 
 app = Flask(__name__)
 
-# PDF folder
+# Ensure PDF folder exists
 PDF_FOLDER = os.path.join(os.path.dirname(__file__), "pdfs")
 os.makedirs(PDF_FOLDER, exist_ok=True)
 
@@ -32,6 +32,7 @@ def serve_pdf():
 
 @app.route("/submit", methods=["POST"])
 def submit_answer():
+    # Accept JSON payload like {"answer": "branch c"}
     data = request.get_json()
     if not data or "answer" not in data:
         return jsonify({"success": False, "message": "No answer provided"}), 400
@@ -40,12 +41,10 @@ def submit_answer():
     correct = answer == "branch c".lower()
     return jsonify({"success": correct})
 
-# Expose the Flask app for Vercel serverless
-from werkzeug.middleware.dispatcher import DispatcherMiddleware
-from werkzeug.serving import run_simple
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000, debug=True)
 
-# Vercel looks for `app` variable at root
-# So just export the Flask app
+
 
 
 
