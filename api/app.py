@@ -4,8 +4,8 @@ import os
 app = Flask(__name__)
 
 # Ensure PDF folder exists
-PDF_FOLDER = os.path.join(os.path.dirname(__file__), "pdfs")
-os.makedirs(PDF_FOLDER, exist_ok=True)
+# PDF_FOLDER = os.path.join(os.path.dirname(__file__), "pdfs")
+# os.makedirs(PDF_FOLDER, exist_ok=True)
 
 HTML_CONTENT = """<!DOCTYPE html>
 <html>
@@ -25,7 +25,7 @@ def index():
 
 @app.route("/pdf")
 def serve_pdf():
-    file_path = os.path.join(PDF_FOLDER, "fake_company_report.pdf")
+     file_path = "fake_company_report.pdf" #os.path.join(PDF_FOLDER, "fake_company_report.pdf")
     if os.path.exists(file_path):
         return send_file(file_path, mimetype="application/pdf")
     return "File not found", 404
@@ -43,6 +43,7 @@ def submit_answer():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
+
 
 
 
